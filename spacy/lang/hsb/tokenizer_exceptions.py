@@ -2,13 +2,13 @@ from ...symbols import NORM, ORTH
 from ...util import update_exc
 from ..tokenizer_exceptions import BASE_EXCEPTIONS
 
-_exc = dict()
-for exc_data in [
-    {ORTH: "mil.", NORM: "milion"},
-    {ORTH: "wob.", NORM: "wobydler"},
-]:
-    _exc[exc_data[ORTH]] = [exc_data]
-
+_exc = {
+    exc_data[ORTH]: [exc_data]
+    for exc_data in [
+        {ORTH: "mil.", NORM: "milion"},
+        {ORTH: "wob.", NORM: "wobydler"},
+    ]
+}
 for orth in [
     "resp.",
 ]:

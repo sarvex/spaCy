@@ -2,19 +2,16 @@ from ...symbols import NORM, ORTH
 from ...util import update_exc
 from ..tokenizer_exceptions import BASE_EXCEPTIONS
 
-_exc = {}
-
-
-# Time
-for exc_data in [
-    {NORM: "قبل الميلاد", ORTH: "ق.م"},
-    {NORM: "بعد الميلاد", ORTH: "ب. م"},
-    {NORM: "ميلادي", ORTH: ".م"},
-    {NORM: "هجري", ORTH: ".هـ"},
-    {NORM: "توفي", ORTH: ".ت"},
-]:
-    _exc[exc_data[ORTH]] = [exc_data]
-
+_exc = {
+    exc_data[ORTH]: [exc_data]
+    for exc_data in [
+        {NORM: "قبل الميلاد", ORTH: "ق.م"},
+        {NORM: "بعد الميلاد", ORTH: "ب. م"},
+        {NORM: "ميلادي", ORTH: ".م"},
+        {NORM: "هجري", ORTH: ".هـ"},
+        {NORM: "توفي", ORTH: ".ت"},
+    ]
+}
 # Scientific abv.
 for exc_data in [
     {NORM: "صلى الله عليه وسلم", ORTH: "صلعم"},

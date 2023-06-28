@@ -19,11 +19,10 @@ def doc(en_tokenizer):
     matcher.add("1", [[{}, ]])
     # fmt: on
     matches = matcher(doc)
-    spans = []
-    for match in matches:
-        spans.append(
-            Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
-        )
+    spans = [
+        Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
+        for match in matches
+    ]
     Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
@@ -43,11 +42,10 @@ def other_doc(en_tokenizer):
     # fmt: on
 
     matches = matcher(doc)
-    spans = []
-    for match in matches:
-        spans.append(
-            Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
-        )
+    spans = [
+        Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
+        for match in matches
+    ]
     Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
@@ -67,11 +65,10 @@ def span_group(en_tokenizer):
     # fmt: on
 
     matches = matcher(doc)
-    spans = []
-    for match in matches:
-        spans.append(
-            Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
-        )
+    spans = [
+        Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
+        for match in matches
+    ]
     Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
@@ -95,16 +92,16 @@ def test_span_group_copy(doc):
     assert list(span_group) != list(clone)
 
     # can't copy if the character offsets don't align to tokens
-    doc2 = Doc(doc.vocab, words=[t.text + "x" for t in doc])
+    doc2 = Doc(doc.vocab, words=[f"{t.text}x" for t in doc])
     with pytest.raises(ValueError):
         span_group.copy(doc=doc2)
 
     # can copy with valid character offsets despite different tokenization
     doc3 = doc.copy()
     with doc3.retokenize() as retokenizer:
-        retokenizer.merge(doc3[0:2])
+        retokenizer.merge(doc3[:2])
         retokenizer.merge(doc3[3:6])
-    span_group = SpanGroup(doc, spans=[doc[0:6], doc[3:6]])
+    span_group = SpanGroup(doc, spans=[doc[:6], doc[3:6]])
     for span1, span2 in zip(span_group, span_group.copy(doc=doc3)):
         assert span1.start_char == span2.start_char
         assert span1.end_char == span2.end_char
@@ -145,7 +142,7 @@ def test_span_group_has_overlap(doc):
 
 def test_span_group_concat(doc, other_doc):
     span_group_1 = doc.spans["SPANS"]
-    spans = [doc[0:5], doc[0:6]]
+    spans = [doc[:5], doc[:6]]
     span_group_2 = SpanGroup(
         doc,
         name="MORE_SPANS",
@@ -190,7 +187,7 @@ def test_span_doc_delitem(doc):
 
 def test_span_group_add(doc):
     span_group_1 = doc.spans["SPANS"]
-    spans = [doc[0:5], doc[0:6]]
+    spans = [doc[:5], doc[:6]]
     span_group_2 = SpanGroup(
         doc,
         name="MORE_SPANS",
@@ -208,7 +205,7 @@ def test_span_group_add(doc):
 
 def test_span_group_iadd(doc):
     span_group_1 = doc.spans["SPANS"].copy()
-    spans = [doc[0:5], doc[0:6]]
+    spans = [doc[:5], doc[:6]]
     span_group_2 = SpanGroup(
         doc,
         name="MORE_SPANS",
@@ -234,7 +231,7 @@ def test_span_group_iadd(doc):
 
 def test_span_group_extend(doc):
     span_group_1 = doc.spans["SPANS"].copy()
-    spans = [doc[0:5], doc[0:6]]
+    spans = [doc[:5], doc[:6]]
     span_group_2 = SpanGroup(
         doc,
         name="MORE_SPANS",
@@ -275,6 +272,6 @@ def test_span_group_init_doc(en_tokenizer):
     """Test that all spans must come from the specified doc."""
     doc1 = en_tokenizer("a b c")
     doc2 = en_tokenizer("a b c")
-    span_group = SpanGroup(doc1, spans=[doc1[0:1], doc1[1:2]])
+    span_group = SpanGroup(doc1, spans=[doc1[:1], doc1[1:2]])
     with pytest.raises(ValueError):
-        span_group = SpanGroup(doc1, spans=[doc1[0:1], doc2[1:2]])
+        span_group = SpanGroup(doc1, spans=[doc1[:1], doc2[1:2]])

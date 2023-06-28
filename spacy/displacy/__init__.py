@@ -68,7 +68,7 @@ def render(
         # See #4840 for details on span wrapper to disable mathjax
         from IPython.core.display import HTML, display
 
-        return display(HTML('<span class="tex2jax_ignore">{}</span>'.format(html)))
+        return display(HTML(f'<span class="tex2jax_ignore">{html}</span>'))
     return html
 
 
